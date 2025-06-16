@@ -14,7 +14,7 @@ s=pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("flappy bird")
 
 #defining font
-font=pygame.font.Sysfont("Times New Roman ",60)
+font=pygame.font.SysFont("Times New Roman ",60)
 ground_scroll=0
 scroll_speed=4
 flying=False
@@ -24,6 +24,7 @@ pipe_frequency=1500
 score=0
 pass_pipe= False
 white= (255,255,255)
+last_pipe=pygame.time.get_ticks()-pipe_frequency
 #load images
 bg=pygame.image.load("bg.png")
 ground=pygame.image.load("ground.png")
@@ -126,6 +127,7 @@ bird_group.add(flappy)
 
 button= Button(int (WIDTH /2), int (HEIGHT/ 2),restart)
 
+run= True
 while True:
     clock.tick(fps)
 
@@ -143,3 +145,42 @@ while True:
                 pass_pipe = False
                 score +=1
     draw_text(str(score),font,white,500 ,10)
+
+    #lookforcolisoin
+    if pygame.sprite.groupcollide(bird_group, pipe_group,False,False)or flappy.rect.top<0:
+        game_over = True
+        
+    if flappy.rect.bottom >= 768:
+        game_over= True
+        flying = False
+
+
+    if flying == True and game_over== False:
+        #genoratenorepipes
+        current_time= pygame.time.get_ticks()
+        if current_time - last_pipe> pipe_frequency:
+            pipe_height = random.randint(-100, 100)
+            bottom_pipe = Pipe(WIDTH, int(HEIGHT/2)+ pipe_height,-1)
+            top_pipe = Pipe(WIDTH, int(HEIGHT/2)+pipe_height,-1)
+            pipe_group.add(bottom_pipe)
+            pipe_group.add(top_pipe)
+            last_pipe= current_time
+
+        pipe_group.update()
+        ground_scroll= ground_scroll-scroll_speed
+        if (ground_scroll> 35):
+            ground_scroll= 0
+    
+    if game_over == True:
+        if Button.draw():
+            game_over=False
+            score= reset_game()
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            run= False
+        if event.type== pygame.MOUSEBUTTONDOWN and flying== False and game_over == False:
+            flying=True
+    pygame.display.update()
+
+
+    pygame.quit()
