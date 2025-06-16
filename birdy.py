@@ -14,7 +14,7 @@ s=pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("flappy bird")
 
 #defining font
-font=pygame.font.SysFont("Times New Roman ",60)
+font=pygame.font.SysFont("Arial",60)
 ground_scroll=0
 scroll_speed=4
 flying=False
@@ -35,7 +35,11 @@ def draw_text(text,color,font,x,y):
     s.blit(image,(x,y))
 
 def reset_game():
-    pass
+    pipe_group.empty()
+    flappy.rect.x=100
+    flappy.rect.y=int(HEIGHT/2)
+    score=0
+    return score
 
 class Pipe(pygame.sprite.Sprite):
     def __init__(self, x, y, pos):
@@ -102,7 +106,7 @@ class Bird(pygame.sprite.Sprite ):
             if pygame.mouse.get_pressed()[0]==0:
                 self.clicked=False
             flap_cooldown=5
-            self_counter+=1
+            self.counter+=1
 
             if self.counter > flap_cooldown:
                 self_counter=0
@@ -161,7 +165,7 @@ while True:
         if current_time - last_pipe> pipe_frequency:
             pipe_height = random.randint(-100, 100)
             bottom_pipe = Pipe(WIDTH, int(HEIGHT/2)+ pipe_height,-1)
-            top_pipe = Pipe(WIDTH, int(HEIGHT/2)+pipe_height,-1)
+            top_pipe = Pipe(WIDTH, int(HEIGHT/2)+pipe_height,+1)
             pipe_group.add(bottom_pipe)
             pipe_group.add(top_pipe)
             last_pipe= current_time
@@ -172,7 +176,7 @@ while True:
             ground_scroll= 0
     
     if game_over == True:
-        if Button.draw():
+        if button.draw():
             game_over=False
             score= reset_game()
     for event in pygame.event.get():
@@ -183,4 +187,5 @@ while True:
     pygame.display.update()
 
 
-    pygame.quit()
+pygame.quit()    
+
