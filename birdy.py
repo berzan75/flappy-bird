@@ -109,9 +109,9 @@ class Bird(pygame.sprite.Sprite ):
             self.counter+=1
 
             if self.counter > flap_cooldown:
-                self_counter=0
+                self.counter=0
                 self.index+=1
-                if self.index > len (self.images):
+                if self.index >= len (self.images):
                     self.index=0
                 self.image=self.images[self.index]
             
@@ -130,11 +130,11 @@ flappy=Bird(100, int (HEIGHT /2))
 bird_group.add(flappy)
 
 button= Button(int (WIDTH /2), int (HEIGHT/ 2),restart)
-
+ 
 run= True
 while True:
     clock.tick(fps)
-
+    s.blit(bg,(0,0))
     pipe_group.draw(s)
     bird_group.draw(s)
     bird_group.update()
@@ -148,7 +148,7 @@ while True:
             if bird_group.sprites()[0].rect.left > pipe_group.sprites()[0].rect.right:
                 pass_pipe = False
                 score +=1
-    draw_text(str(score),font,white,500 ,10)
+    draw_text(str(score),white,font,500 ,10)
 
     #lookforcolisoin
     if pygame.sprite.groupcollide(bird_group, pipe_group,False,False)or flappy.rect.top<0:
@@ -186,6 +186,4 @@ while True:
             flying=True
     pygame.display.update()
 
-
 pygame.quit()    
-
